@@ -1,0 +1,49 @@
+[package]
+name = "pufferfish"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.release]
+# Compile with target-cpu=native for fastest performance
+opt-level = 3
+lto = true
+# debug = true
+
+# Even faster flags
+debug = false
+panic = "abort"
+
+[dependencies]
+kmers = { git = "https://github.com/COMBINE-lab/kmers.git" }
+clap = { version = ">=3.1.0", features = ["derive"] }
+csv = "1.1"
+bincode = ">=1.3.3"
+delegate = "0.6.2"
+log = "0.4"
+log4rs = "1.0"
+lru = "0.7.3"
+rand = ">=0.8.5"
+serde_json = ">=1.0"
+serde-pickle = ">=1.0"
+serde =  {version = ">=1.0", features = ["derive"] }
+seq_io = { git = "https://github.com/markschl/seq_io" }
+simple-sds = {git = "https://github.com/thejasonfan/simple-sds", branch = "main"}
+# simple-sds = {git = "https://github.com/jltsiren/simple-sds", tag = "v0.3"}
+flate2 = ">=1"
+criterion = "0.3"
+
+[dev-dependencies]
+pretty_assertions = ">=1.1"
+quickcheck = ">=1"
+quickcheck_macros = ">=1"
+criterion = "0.3"
+
+[lib]
+# disable cargo bench harness in favor of criterion
+bench = false
+
+[[bench]]
+name = "bench_wm"
+harness = false

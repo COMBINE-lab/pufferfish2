@@ -1,0 +1,30 @@
+[2022-02-04 22:14:30.972] [puff::index::jointLog] [info] Running fixFasta
+[2022-02-04 22:14:30.975] [puff::index::jointLog] [info] Replaced 0 non-ATCG nucleotides
+[2022-02-04 22:14:30.975] [puff::index::jointLog] [info] Clipped poly-A tails from 0 transcripts
+[2022-02-04 22:14:30.976] [puff::index::jointLog] [info] Filter size not provided; estimating from number of distinct k-mers
+[2022-02-04 22:14:30.978] [puff::index::jointLog] [info] ntHll estimated 54811 distinct k-mers, setting filter size to 2^20
+[2022-02-04 22:14:31.010] [puff::index::jointLog] [info] Starting the Pufferfish indexing by reading the GFA binary file.
+[2022-02-04 22:14:31.010] [puff::index::jointLog] [info] Setting the index/BinaryGfa directory test_data/small_txome_index_sparse
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] Done wrapping the rank vector with a rank9sel structure.
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] contig count for validation: 23
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] Total # of Contigs : 23
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] Total # of numerical Contigs : 23
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] Total # of contig vec entries: 36
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] bits per offset entry 6
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] Done constructing the contig vector. 24
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] # segments = 23
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] total length = 19,592
+[2022-02-04 22:14:31.011] [puff::index::jointLog] [info] Reading the reference files ...
+[2022-02-04 22:14:31.013] [puff::index::jointLog] [info] positional integer width = 15
+[2022-02-04 22:14:31.013] [puff::index::jointLog] [info] seqSize = 19,592
+[2022-02-04 22:14:31.013] [puff::index::jointLog] [info] rankSize = 19,592
+[2022-02-04 22:14:31.013] [puff::index::jointLog] [info] edgeVecSize = 0
+[2022-02-04 22:14:31.013] [puff::index::jointLog] [info] num keys = 18,902
+[2022-02-04 22:14:31.034] [puff::index::jointLog] [info] mphf size = 0.0125198 MB
+[2022-02-04 22:14:31.034] [puff::index::jointLog] [info] # sampled kmers = 2,112
+[2022-02-04 22:14:31.034] [puff::index::jointLog] [info] # skipped kmers = 16,790
+[2022-02-04 22:14:31.034] [puff::index::jointLog] [info] extWidth = 2
+[2022-02-04 22:14:31.034] [puff::index::jointLog] [info] 
+Filling presence Vector
+[2022-02-04 22:14:31.035] [puff::index::jointLog] [info] i = 2,112, sampled kmers = 2,112, loops = 23, contig array = 23
+[2022-02-04 22:14:31.035] [puff::index::jointLog] [info] num ones in presenceVec = 2,112, i = 2,112, indices.size() = 2,112

@@ -1,0 +1,22 @@
+{
+    "index_version": 4,
+    "reference_gfa": [
+        "yeastchr01/pufferfish_index"
+    ],
+    "sampling_type": "dense",
+    "k": 31,
+    "num_kmers": 221918,
+    "num_contigs": 577,
+    "seq_length": 239228,
+    "have_ref_seq": true,
+    "have_edge_vec": false,
+    "SeqHash": "3c5c06b2ccb802798265a543cc6511d954a0a64a522c3f6af05be0553d6f0a62",
+    "NameHash": "7fcb45af27576afe48ccd78ec97f1f259a20ba5af218326e5ca0435002845803",
+    "SeqHash512": "959cb1883fc1ca9ae1394ceb475a356ead1ecceff5824ae730c25c3c8cb58c90d823ca31107c6163cd4b32b033a1c1af84d11adc9271dd181d331404286184cb",
+    "NameHash512": "78631229740885755bb5f7074b822b25fd339f473a34bddd7aab1ca67f2f2fbbd3501c9d2993a8c3bb0e83dc358943b359043e3a316b83ae5afe821f59c7ef66",
+    "DecoySeqHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "DecoyNameHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "num_decoys": 0,
+    "first_decoy_index": 18446744073709551615,
+    "keep_duplicates": false
+}

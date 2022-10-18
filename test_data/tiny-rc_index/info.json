@@ -1,0 +1,22 @@
+{
+    "index_version": 4,
+    "reference_gfa": [
+        "tiny-rc/tiny-rc_index"
+    ],
+    "sampling_type": "dense",
+    "k": 3,
+    "num_kmers": 4,
+    "num_contigs": 1,
+    "seq_length": 6,
+    "have_ref_seq": true,
+    "have_edge_vec": false,
+    "SeqHash": "b34907da5f3cfe3d7d10ad0d248cf766be6ddfc1d7c07d4981f8fba46eca45c9",
+    "NameHash": "48a9ebc45043ca238925557f54d7ba7a68d4c9307dcb0b698adbe43ab26d3150",
+    "SeqHash512": "e4c1ec0e98273d50e152c47ec1b37bbb852151321256862919260967cd0d1927c4d884165884cc2a13d48398c0215efbed12d213012dd43a163c8a0377285f88",
+    "NameHash512": "c4a102ed32067adb92768ba7f53c828b6895efcacca70a0fe599239f7feddb99b84b2bd5d9f0242c373107185c23676c5461ee3ee598d549c537db42c49f021e",
+    "DecoySeqHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "DecoyNameHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "num_decoys": 0,
+    "first_decoy_index": 18446744073709551615,
+    "keep_duplicates": false
+}
