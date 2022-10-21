@@ -31,10 +31,7 @@ pub use base_index::BaseIndex;
 pub use contig::ContigOrientation;
 pub use dense_index::DenseIndex;
 pub use info::Info;
-pub use sparse_contig_index::{
-    WMSparseContigTable, WMSparseDenseIndex,
-    WMSparseSparseIndex,
-};
+pub use sparse_contig_index::{WMSparseContigTable, WMSparseDenseIndex, WMSparseSparseIndex};
 pub use sparse_index::SparseIndex;
 
 use compact::FromCompact;

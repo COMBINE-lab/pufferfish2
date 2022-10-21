@@ -151,8 +151,7 @@ where
 }
 
 #[allow(dead_code)]
-impl<'a, T> RandomContigSampler<'a, T>
-{
+impl<'a, T> RandomContigSampler<'a, T> {
     fn new(index: &'a T, p: f64) -> Self {
         assert!(p < 1., "Sampling prob must be < 1, {} given", p);
         Self {
@@ -183,8 +182,7 @@ where
     }
 }
 
-impl<'a, T> StridedBVPopSampler<'a, T>
-{
+impl<'a, T> StridedBVPopSampler<'a, T> {
     pub fn new(index: &'a T, stride: usize, thresh: usize) -> Self {
         Self {
             index,
@@ -217,8 +215,7 @@ where
         is_sampled_bv
     }
 }
-impl<'a, T> StridedBVSampler<'a, T>
-{
+impl<'a, T> StridedBVSampler<'a, T> {
     pub fn new(index: &'a T, stride: usize) -> Self {
         Self { index, stride }
     }
@@ -241,8 +238,7 @@ where
     }
 }
 
-impl<'a, T> StridedSampler<'a, T>
-{
+impl<'a, T> StridedSampler<'a, T> {
     pub fn new(index: &'a T, stride: usize) -> Self {
         Self { index, stride }
     }
@@ -282,8 +278,7 @@ where
     }
 }
 
-impl<'a, T> StridedOccThreshSampler<'a, T>
-{
+impl<'a, T> StridedOccThreshSampler<'a, T> {
     pub fn new(index: &'a T, stride: usize, thresh: usize) -> Self {
         Self {
             index,
@@ -330,9 +325,9 @@ where
 mod tests {
     use super::*;
     use crate::cpp::DeserializeFromCpp;
-    use crate::index::sparse_contig_index::{WMSparseSparseIndex};
+    use crate::index::sparse_contig_index::WMSparseSparseIndex;
     use crate::index::validate::*;
-    use crate::index::{SparseIndex, DenseIndex};
+    use crate::index::{DenseIndex, SparseIndex};
     use crate::test_utils::*;
 
     #[test]

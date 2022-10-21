@@ -1,7 +1,14 @@
 pub use super::{
-    DecodeHit, DenseIndex, Info, MappedRefPos, PuffQuery, Pufferfish, PufferfishBase,
-    PufferfishType, SparseIndex, 
-    WMSparseContigTable, 
+    DecodeHit,
+    DenseIndex,
+    Info,
+    MappedRefPos,
+    PuffQuery,
+    Pufferfish,
+    PufferfishBase,
+    PufferfishType,
+    SparseIndex,
+    WMSparseContigTable,
     WMSparseDenseIndex,
     WMSparseSparseIndex,
     // TODO caches too?

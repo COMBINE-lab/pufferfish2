@@ -13,10 +13,10 @@ struct Args {
     #[clap(short, long)]
     out_index_dir: String,
 
-    #[clap(short, long, default_value_t=64)]
+    #[clap(short, long, default_value_t = 64)]
     sampled_wm_thresh: usize,
 
-    #[clap(short, long)]
+    #[clap(short, long, default_value_t = 64)]
     nonsamp_wm_thresh: usize,
 
     #[clap(subcommand)]
@@ -54,7 +54,6 @@ fn main() {
                 args.nonsamp_wm_thresh,
             );
             spi.lazy_serialize_to(args.out_index_dir).unwrap();
-
         }
         PufferfishType::Dense => {
             info!("Sparsifying DenseIndex");

@@ -7,7 +7,7 @@ use simple_sds::ops::{Rank, Select, SelectZero, Vector};
 use simple_sds::raw_vector::RawVector;
 use std::borrow::Borrow;
 
-// Extension traits to serialize simple-sds datastructures since they do not 
+// Extension traits to serialize simple-sds datastructures since they do not
 // derive serde drivers.
 // NB / TODO: we could remove this and just use forked simple-sds repo and derive Serde traits there.
 

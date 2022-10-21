@@ -1,5 +1,5 @@
 use super::filter_rank_select::{FilterRank, FilterSelect};
-use super::occs;
+use super::occs::{self, NotSampledWMOcc};
 use super::occs::{EncodedOccs, NotSampledContigOcc, SampledContigOcc};
 use super::wm_sparse_projected_hits::SparseProjHits;
 
@@ -37,36 +37,24 @@ enum State {
 #[derive(Debug)]
 pub struct RefWalker<'a, T> {
     index: &'a T,
-    // curr_occ_rank: usize,
-    // curr_contig_id: usize,
     state: State,
     finish_o: ContigOrientation,
-    // state: RefWalkerState<'a>,
-    // encoded_occs: &'a EncodedOccs<'a>,
-    // encoded_occs: &'a [u8],
 }
 
 impl<'a, T> RefWalker<'a, T>
 where
     T: PufferfishBase + PuffQuery<'a, HitsT = SparseProjHits<'a, T>>,
 {
-    pub fn new(sph: &SparseProjHits<'a, T>, occ_rank: usize) -> Self {
-        // let start_state = Self::get_start_state(sph, occ_rank);
-
+    pub fn reset(&mut self, sph: &SparseProjHits<'a, T>, occ_rank: usize) {
         let finish_o;
         let state = match &sph.hits {
             EncodedOccs::NotSampled(hits) => {
                 let occ = NotSampledContigOcc::from(hits[occ_rank]);
                 let handshake_rank = hits.filter_rank(occ_rank, NOTSAMP_HANDSHAKE_CURR_MASK);
                 finish_o = occ.o;
-                // println!(
-                //     "ctg_id: {}, o: {:?}, base {}, pred, {}",
-                //     sph.contig_id, occ.o, occ.curr, occ.pred
-                // );
 
                 State::Continue {
                     offset: 0,
-                    // contig_len: sph.contig_len,
                     contig_id: sph.contig_id,
                     handshake_rank,
                     curr: occ.curr,
@@ -90,7 +78,6 @@ where
                 let curr = sph.index.get_contig_nuc(sph.contig_id, o, k - 1);
                 State::Continue {
                     offset: 0,
-                    // contig_len: sph.contig_len,
                     contig_id: sph.contig_id,
                     handshake_rank,
                     curr,
@@ -100,32 +87,22 @@ where
             }
             _ => panic!("Cannot walk from sampled"),
         };
-        RefWalker {
-            index: sph.index,
-            state,
-            finish_o,
-        }
+        self.state = state;
+        self.finish_o = finish_o;
     }
 
-    pub fn new_w_cache(
-        sph: &SparseProjHits<'a, T>,
-        occ_rank: usize,
-        cache: &mut WalkCache<'a, T>,
-    ) -> Self {
+    pub fn new(sph: &SparseProjHits<'a, T>, occ_rank: usize) -> Self {
+        // let start_state = Self::get_start_state(sph, occ_rank);
+
         let finish_o;
         let state = match &sph.hits {
             EncodedOccs::NotSampled(hits) => {
                 let occ = NotSampledContigOcc::from(hits[occ_rank]);
                 let handshake_rank = hits.filter_rank(occ_rank, NOTSAMP_HANDSHAKE_CURR_MASK);
                 finish_o = occ.o;
-                // println!(
-                //     "ctg_id: {}, o: {:?}, base {}, pred, {}",
-                //     sph.contig_id, occ.o, occ.curr, occ.pred
-                // );
 
                 State::Continue {
                     offset: 0,
-                    // contig_len: sph.contig_len,
                     contig_id: sph.contig_id,
                     handshake_rank,
                     curr: occ.curr,
@@ -146,14 +123,9 @@ where
                 // Get curr
                 let o = finish_o;
                 let k = sph.index.k() as usize;
-                let curr = cache
-                    .get_or_insert_curr(sph.contig_id, o, || {
-                        sph.index.get_contig_nuc(sph.contig_id, o, k - 1)
-                    })
-                    .unwrap();
+                let curr = sph.index.get_contig_nuc(sph.contig_id, o, k - 1);
                 State::Continue {
                     offset: 0,
-                    // contig_len: sph.contig_len,
                     contig_id: sph.contig_id,
                     handshake_rank,
                     curr,
@@ -170,23 +142,85 @@ where
         }
     }
 
-    #[inline]
+    pub fn new_w_cache_notwm(
+        sph: &SparseProjHits<'a, T>,
+        hits: &[u8],
+        occ_rank: usize,
+        _cache: &mut WalkCache<'a, T>, //unused
+    ) -> Self {
+        let occ = NotSampledContigOcc::from(hits[occ_rank]);
+        let handshake_rank = hits.filter_rank(occ_rank, NOTSAMP_HANDSHAKE_CURR_MASK);
+        let finish_o = occ.o;
+
+        let state = State::Continue {
+            offset: 0,
+            contig_id: sph.contig_id,
+            handshake_rank,
+            curr: occ.curr,
+            pred: occ.pred,
+            o: occ.o,
+        };
+
+        RefWalker {
+            index: sph.index,
+            state,
+            finish_o,
+        }
+    }
+
+    pub fn new_w_cache_wm(
+        sph: &SparseProjHits<'a, T>,
+        wm_occs: &NotSampledWMOcc,
+        occ_rank: usize,
+        cache: &mut WalkCache<'a, T>,
+    ) -> Self {
+        let symbol = wm_occs.pred_wm_slice.access(occ_rank);
+        let handshake_rank = wm_occs.pred_wm_slice.rank(symbol, occ_rank);
+        let finish_o = if symbol & 0b1 == 1 {
+            ContigOrientation::Forward
+        } else {
+            ContigOrientation::Backward
+        };
+        let pred = symbol >> 1;
+
+        // Get curr
+        let o = finish_o;
+        let k = sph.index.k() as usize;
+        let curr = cache
+            .get_or_insert_curr(sph.contig_id, o, || {
+                sph.index.get_contig_nuc(sph.contig_id, o, k - 1)
+            })
+            .unwrap();
+        let state = State::Continue {
+            offset: 0,
+            // contig_len: sph.contig_len,
+            contig_id: sph.contig_id,
+            handshake_rank,
+            curr,
+            pred: pred as u64,
+            o,
+        };
+
+        RefWalker {
+            index: sph.index,
+            state,
+            finish_o,
+        }
+    }
+
+    #[inline(always)]
     fn is_finished(&self) -> bool {
-        // TODO could implement an enum that maintians sampled/not-sampled
-        // state with occ *and* encoded occs with the right types
-        // self.state.is_finished
         matches!(self.state, State::Finished { .. })
     }
 
-    #[inline]
+    #[inline(always)]
     fn grp(&self, km: &Kmer) -> SparseProjHits<'a, T> {
-        // TODO wtf is this func?
         let km = CanonicalKmer::from(km.clone());
         let hits = self.index.get_ref_pos(&km).unwrap();
-        // trace!("grp id: {}", hits.contig_id);
         hits
     }
 
+    #[inline]
     fn prev(&mut self) {
         assert!(!self.is_finished());
         let k = self.index.k() as usize;
@@ -317,8 +351,7 @@ where
         } = self.state
         {
             let pred_suffix = self.get_handshake_kmer_w_cache(contig_id, pred, o, cache);
-            // prev hits are guaranteed so we don't necessarily need all of get_ref_pos
-            // let km = CanonicalKmer::from(pred_suffix);
+            // TODO: prev hits are guaranteed so we don't necessarily need all of get_ref_pos
             let pred_hits = cache
                 .get_or_insert_hit(&pred_suffix, || self.grp(&pred_suffix))
                 .unwrap();
@@ -424,10 +457,8 @@ where
         }
     }
 
-    #[inline]
+    #[inline(always)]
     fn get_sampled_pred_pattern(curr: Base, pred_o: ContigOrientation) -> u64 {
-        // TODO: could make this "faster" by just manipulating bits
-        // but instantiating the pred occ with params is ok for now
         let pred_occ = SampledContigOcc {
             succ: curr,
             o: pred_o,
@@ -437,10 +468,8 @@ where
         pred_occ.as_encoded()
     }
 
-    #[inline]
+    #[inline(always)]
     fn get_not_sampled_pred_pattern(curr: Base, pred_o: ContigOrientation) -> u8 {
-        // TODO: could make this "faster" by just manipulating bits (maybe not though...)
-        // but instantiating the pred occ with params is more correct
         let pred_occ = NotSampledContigOcc {
             succ: curr,
             o: pred_o,
@@ -500,7 +529,6 @@ where
             }
         }
     }
-
 }
 
 pub struct WalkCache<'a, T> {

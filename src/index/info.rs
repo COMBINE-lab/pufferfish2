@@ -1,11 +1,7 @@
 use super::ContigSamplingStrategy;
 use super::PufferfishBase;
 use super::PufferfishType;
-use super::{
-    BaseIndex, DenseIndex, 
-    SparseIndex, 
-    WMSparseDenseIndex, WMSparseSparseIndex,
-};
+use super::{BaseIndex, DenseIndex, SparseIndex, WMSparseDenseIndex, WMSparseSparseIndex};
 use log::debug;
 use serde::{Deserialize, Serialize};
 use serde_json;

@@ -1,5 +1,5 @@
 // use crate::canonical_kmer::CanonicalKmer;
-use super::occs::{EncodedOccs, SampledContigOcc};
+use super::occs::{EncodedOccs, NotSampledWMOcc, SampledContigOcc};
 use super::wm_ref_walker::{RefWalker, WalkCache};
 use super::StreamingCache;
 use crate::index::contig::ContigOcc;
@@ -42,6 +42,7 @@ impl<'a, T> Clone for SparseProjHits<'a, T> {
             contig_id: self.contig_id,
             contig_len: self.contig_len,
             hits: self.hits.clone(),
+            // kth_bases: self.kth_bases.clone(),
         }
     }
 }
@@ -79,6 +80,7 @@ where
         let occ = match &self.hits {
             EncodedOccs::Sampled(hits) => self.decode_sampled_contig_occ(hits[i]),
             EncodedOccs::NotSampled(_) => self.decode_nonsamp_contig_occ(i),
+            // No use for pred/succ info, just unwrap
             EncodedOccs::SampledWM(hits) => self.decode_sampled_contig_occ(hits.encoded_occs[i]),
             EncodedOccs::NotSampledWM(_) => self.decode_nonsamp_contig_occ(i),
             EncodedOccs::NotEncoded(occs) => occs[i].clone(),
@@ -115,6 +117,7 @@ where
                 .map(|i| self.decode_nonsamp_contig_occ(i))
                 .collect(),
             EncodedOccs::SampledWM(hits) => {
+                // No use for pred/succ info, just unwrap
                 let hits = hits.encoded_occs;
                 hits.iter()
                     .map(|&hit| self.decode_sampled_contig_occ(hit))
@@ -167,9 +170,9 @@ where
                 .iter()
                 .map(|&hit| self.decode_sampled_contig_occ(hit))
                 .collect(),
-            EncodedOccs::NotSampled(_) => (0..self.len())
+            EncodedOccs::NotSampled(hits) => (0..self.len())
                 .into_iter()
-                .map(|i| self.decode_nonsamp_contig_occ_w_cache(i, cache))
+                .map(|i| self.decode_nonsamp_notwm_contig_occ_w_cache(i, hits, cache))
                 .collect(),
             EncodedOccs::SampledWM(hits) => {
                 // No use for pred/succ info, just unwrap
@@ -178,10 +181,7 @@ where
                     .map(|&hit| self.decode_sampled_contig_occ(hit))
                     .collect()
             }
-            EncodedOccs::NotSampledWM(_) => (0..self.len())
-                .into_iter()
-                .map(|i| self.decode_nonsamp_contig_occ_w_cache(i, cache))
-                .collect(),
+            EncodedOccs::NotSampledWM(_hits) => self.nonsamp_hits_as_contig_occs_w_cache(cache),
             EncodedOccs::NotEncoded(occs) => occs.clone(),
         }
     }
@@ -210,12 +210,32 @@ where
         }
     }
 
-    pub fn decode_nonsamp_contig_occ_w_cache(
+    // pub fn decode_nonsamp_contig_occ_w_cache(
+    //     &self,
+    //     occ_rank: usize,
+    //     cache: &'cache mut WalkCache<'a, T>,
+    // ) -> ContigOcc {
+    //     let mut walker = RefWalker::new_w_cache(self, occ_rank, cache);
+    //     walker.walk_with_cache(cache)
+    // }
+
+    pub fn decode_nonsamp_notwm_contig_occ_w_cache(
         &self,
         occ_rank: usize,
+        hits: &[u8],
         cache: &'cache mut WalkCache<'a, T>,
     ) -> ContigOcc {
-        let mut walker = RefWalker::new_w_cache(self, occ_rank, cache);
+        let mut walker = RefWalker::new_w_cache_notwm(self, hits, occ_rank, cache);
+        walker.walk_with_cache(cache)
+    }
+
+    pub fn decode_nonsamp_wm_contig_occ_w_cache(
+        &self,
+        occ_rank: usize,
+        hits: &NotSampledWMOcc,
+        cache: &'cache mut WalkCache<'a, T>,
+    ) -> ContigOcc {
+        let mut walker = RefWalker::new_w_cache_wm(self, hits, occ_rank, cache);
         walker.walk_with_cache(cache)
     }
 
@@ -228,5 +248,20 @@ where
     pub fn decode_nonsamp_contig_occ(&self, occ_rank: usize) -> ContigOcc {
         let mut walker = RefWalker::new(self, occ_rank);
         walker.walk()
+    }
+
+    pub fn nonsamp_hits_as_contig_occs_w_cache(
+        &self,
+        cache: &'cache mut WalkCache<'a, T>,
+    ) -> Vec<ContigOcc> {
+        let mut walker = RefWalker::new(self, 0);
+        let mut occs = Vec::with_capacity(self.len());
+        for occ_rank in 0..self.len() {
+            let contig_info = walker.walk_with_cache(cache);
+            walker.reset(self, occ_rank);
+            occs.push(contig_info)
+        }
+
+        occs
     }
 }

@@ -205,8 +205,8 @@ mod test_cached {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::index::{DenseIndex, SparseIndex};
     use crate::cpp::DeserializeFromCpp;
+    use crate::index::{DenseIndex, SparseIndex};
     use crate::test_utils::*;
 
     #[test]
