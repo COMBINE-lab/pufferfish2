@@ -33,6 +33,7 @@ impl ReadFrom for u64 {
         Ok(val)
     }
 }
+
 impl ReadFrom for f64 {
     fn read_from(f: &mut dyn Read) -> Result<Self> {
         let mut val: [u8; 8] = [0; 8];

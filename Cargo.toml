@@ -29,7 +29,7 @@ serde_json = ">=1.0"
 serde-pickle = ">=1.0"
 serde =  {version = ">=1.0", features = ["derive"] }
 seq_io = { git = "https://github.com/markschl/seq_io" }
-simple-sds = {git = "https://github.com/thejasonfan/simple-sds", branch = "main"}
+simple-sds = {git = "https://github.com/thejasonfan/simple-sds", branch = "serde_compat"}
 # simple-sds = {git = "https://github.com/jltsiren/simple-sds", tag = "v0.3"}
 flate2 = ">=1"
 criterion = "0.3"

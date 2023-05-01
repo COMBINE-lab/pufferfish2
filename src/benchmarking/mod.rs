@@ -1,6 +1,7 @@
 use kmers::naive_impl::CanonicalKmer;
 use log::info;
 use rand::{rngs::StdRng, Rng, SeedableRng};
+use simple_sds::ops::Access;
 
 use std::fmt::Debug;
 

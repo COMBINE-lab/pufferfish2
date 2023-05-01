@@ -2,7 +2,7 @@ perf.data*
 .cargo
 temp/
 *.code-workspace
-
+.DS_Store
 
 # convention for temporary "backups" and temporary files
 *.bk

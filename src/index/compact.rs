@@ -72,6 +72,8 @@ impl FromCompact for IntVector {
 mod int_vec_test {
     use super::*;
     use simple_sds::ops::Vector;
+    use simple_sds::ops::Access;
+
 
     #[test]
     fn test() {
