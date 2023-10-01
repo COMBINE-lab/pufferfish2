@@ -1,4 +1,4 @@
-# pufferfish2
+# Pufferfish2
 
 `Pufferfish2` is a reference based index for exact k-mer queries designed to be a successor to
 [`Pufferfish`](https://github.com/COMBINE-lab/pufferfish).
@@ -6,6 +6,10 @@
 `Pufferfish2` sparsifies and compresses a `pufferfish` index by sampling unitigs and corresponding unitig-occurrences stored in `pufferfish`'s "unitig table", `utab`.
 
 Currently, `pufferfish2` is also minimal reimplementation of `pufferfish` providing load-only compatibility.
+
+The index is described in the paper **[Spectrum Preserving Tilings Enable Sparse and Modular Reference Indexing](https://link.springer.com/chapter/10.1007/978-3-031-29119-7_2)** (RECOMB 2023).
+
+Please, cite this paper if you use `Pufferfish2`.
 
 ## Building and testing
 
